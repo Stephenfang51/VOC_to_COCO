@@ -8,13 +8,15 @@ import xml.etree.ElementTree as ET
 
 
 """
-You only need to set the following two parts
+You only need to set the following three parts
 1.val_files_num : num of validation samples from your all samples
-2.voc_annotations : path to your VOC dataset Annotations
+2.test_files_num = num of test samples from your all samples
+3.voc_annotations : path to your VOC dataset Annotations
  
 """
 val_files_num = 100
-voc_annotations = '././VOC/Annotations/'
+test_files_num = 100
+voc_annotations = '././VOC/Annotations/'  #remember to modify the path
 
 split = voc_annotations.split('/')
 coco_name = split[-3]
@@ -35,6 +37,7 @@ coco_path = os.path.join(main_path, coco_name+'_COCO/')
 coco_images = os.path.join(main_path, coco_name+'_COCO/images')
 coco_json_annotations = os.path.join(main_path, coco_name+'_COCO/annotations/')
 xml_val = os.path.join(main_path, 'xml', 'xml_val/')
+xml_test = os.path.join(main_path, 'xml/', 'xml_test/')
 xml_train = os.path.join(main_path, 'xml/', 'xml_train/')
 
 voc_images = os.path.join(main_path, coco_name, 'JPEGImages/')
@@ -63,6 +66,7 @@ mkdir(coco_path)
 mkdir(coco_images)
 mkdir(coco_json_annotations)
 mkdir(xml_val)
+mkdir(xml_test)
 mkdir(xml_train)
 
 
@@ -91,6 +95,23 @@ for i in range(val_files_num):
             random_file = random.choice(os.listdir(xml_train))
             source_file = "%s/%s" % (xml_train, random_file)
             shutil.move(source_file, xml_val)
+    else:
+        print('The folders are empty, please make sure there are enough %d file to move' % (val_files_num))
+        break
+
+for i in range(test_files_num):
+    if len(os.listdir(xml_train)) > 0:
+
+        random_file = random.choice(os.listdir(xml_train))
+        #         print("%d) %s"%(i+1,random_file))
+        source_file = "%s/%s" % (xml_train, random_file)
+
+        if random_file not in os.listdir(xml_test):
+            shutil.move(source_file, xml_test)
+        else:
+            random_file = random.choice(os.listdir(xml_train))
+            source_file = "%s/%s" % (xml_train, random_file)
+            shutil.move(source_file, xml_test)
     else:
         print('The folders are empty, please make sure there are enough %d file to move' % (val_files_num))
         break
@@ -239,7 +260,9 @@ def convert(xml_files, json_file):
 
 
 xml_val_files = glob.glob(os.path.join(xml_val, "*.xml"))
+xml_test_files = glob.glob(os.path.join(xml_test, "*.xml"))
 xml_train_files = glob.glob(os.path.join(xml_train, "*.xml"))
 
 convert(xml_val_files, coco_json_annotations + 'val2017.json')
+convert(xml_test_files, coco_json_annotations+'test2017.json')
 convert(xml_train_files, coco_json_annotations + 'train2017.json')
