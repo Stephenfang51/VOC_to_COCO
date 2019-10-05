@@ -29,7 +29,7 @@
 
 2. 克隆本仓到你指定的地址
 
-`git clone https://github.com/Stephenfang51/VOC_to_COCO `
+   `git clone https://github.com/Stephenfang51/VOC_to_COCO `
 
 
 
